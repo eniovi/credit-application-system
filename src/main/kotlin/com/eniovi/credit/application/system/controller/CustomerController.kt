@@ -5,6 +5,8 @@ import com.eniovi.credit.application.system.dto.CustomerUpdateDto
 import com.eniovi.credit.application.system.dto.CustomerView
 import com.eniovi.credit.application.system.entity.Customer
 import com.eniovi.credit.application.system.service.impl.CustomerService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,23 +16,27 @@ class CustomerController(
 ) {
 
     @PostMapping
-    fun save(@RequestBody customerDto: CustomerDto): String {
+    fun save(@RequestBody customerDto: CustomerDto): ResponseEntity<String> {
         val savedCustomer: Customer = customerService.save(customerDto.toCustomer())
-        return "Customer ${savedCustomer.email} saved!"
+        val response = "Customer ${savedCustomer.email} saved!"
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @GetMapping("{id}")
-    fun findById(@PathVariable id: Long): CustomerView {
+    fun findById(@PathVariable id: Long): ResponseEntity<CustomerView> {
         val customer: Customer = customerService.findById(id)
-        return CustomerView(customer)
+        return ResponseEntity.ok(CustomerView(customer))
     }
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable id: Long) = customerService.delete(id)
 
     @PatchMapping("{id}")
-    fun update(@PathVariable id: Long, @RequestBody customerUpdateDto: CustomerUpdateDto): CustomerView {
+    fun update(
+        @PathVariable id: Long,
+        @RequestBody customerUpdateDto: CustomerUpdateDto
+    ): ResponseEntity<CustomerView> {
         val customerUpdated: Customer = customerService.update(id, customerUpdateDto)
-        return CustomerView(customerUpdated)
+        return ResponseEntity.ok(CustomerView(customerUpdated))
     }
 }
