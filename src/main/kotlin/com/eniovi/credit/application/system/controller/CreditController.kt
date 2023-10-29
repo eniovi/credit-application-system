@@ -3,7 +3,8 @@ package com.eniovi.credit.application.system.controller
 import com.eniovi.credit.application.system.dto.CreditDto
 import com.eniovi.credit.application.system.dto.CreditView
 import com.eniovi.credit.application.system.entity.Credit
-import com.eniovi.credit.application.system.service.impl.CreditService
+import com.eniovi.credit.application.system.service.ICreditService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,11 +14,11 @@ import java.util.stream.Collectors
 @RestController
 @RequestMapping("api/credits")
 class CreditController(
-    private val creditService: CreditService
+    private val creditService: ICreditService
 ) {
 
     @PostMapping
-    fun save(@RequestBody creditDto: CreditDto): ResponseEntity<String> {
+    fun save(@RequestBody @Valid creditDto: CreditDto): ResponseEntity<String> {
         val creditSaved: Credit = creditService.save(creditDto.toCredit())
         val response = "Credit ${creditSaved.creditCode} - Customer ${creditSaved.customer?.firstName} saved!"
         return ResponseEntity.status(HttpStatus.CREATED).body(response)

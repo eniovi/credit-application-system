@@ -4,7 +4,8 @@ import com.eniovi.credit.application.system.dto.CustomerDto
 import com.eniovi.credit.application.system.dto.CustomerUpdateDto
 import com.eniovi.credit.application.system.dto.CustomerView
 import com.eniovi.credit.application.system.entity.Customer
-import com.eniovi.credit.application.system.service.impl.CustomerService
+import com.eniovi.credit.application.system.service.ICustomerService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -12,11 +13,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("api/customers")
 class CustomerController(
-    private val customerService: CustomerService
+    private val customerService: ICustomerService
 ) {
 
     @PostMapping
-    fun save(@RequestBody customerDto: CustomerDto): ResponseEntity<String> {
+    fun save(@RequestBody @Valid customerDto: CustomerDto): ResponseEntity<String> {
         val savedCustomer: Customer = customerService.save(customerDto.toCustomer())
         val response = "Customer ${savedCustomer.email} saved!"
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
@@ -29,12 +30,13 @@ class CustomerController(
     }
 
     @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable id: Long) = customerService.delete(id)
 
     @PatchMapping("{id}")
     fun update(
         @PathVariable id: Long,
-        @RequestBody customerUpdateDto: CustomerUpdateDto
+        @RequestBody @Valid customerUpdateDto: CustomerUpdateDto
     ): ResponseEntity<CustomerView> {
         val customerUpdated: Customer = customerService.update(id, customerUpdateDto)
         return ResponseEntity.ok(CustomerView(customerUpdated))
