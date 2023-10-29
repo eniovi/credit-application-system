@@ -2,9 +2,7 @@ package com.eniovi.credit.application.system.dto
 
 import com.eniovi.credit.application.system.entity.Credit
 import com.eniovi.credit.application.system.entity.Customer
-import jakarta.validation.constraints.Future
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Positive
+import jakarta.validation.constraints.*
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -13,7 +11,8 @@ data class CreditDto(
     val creditValue: BigDecimal,
     @field:Future(message = "Day first installment must be after current date")
     val dayFirstInstallment: LocalDate,
-    @field:Positive(message = "Number of installments must be bigger than zero")
+    @field:Min(value = 1)
+    @field:Max(value = 48)
     val numberOfInstallments: Int,
     @field:NotNull(message = "Customer Id is required")
     var customerId: Long
