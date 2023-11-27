@@ -6,8 +6,6 @@ import com.eniovi.credit.application.system.entity.Customer
 import com.eniovi.credit.application.system.exception.BusinessException
 import com.eniovi.credit.application.system.repository.CustomerRepository
 import com.eniovi.credit.application.system.service.ICustomerService
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.NotNull
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,7 +14,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.test.context.ActiveProfiles
 import java.math.BigDecimal
 import java.util.*
 import kotlin.random.Random

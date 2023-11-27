@@ -3,7 +3,6 @@ package com.eniovi.credit.application.system.repository
 import com.eniovi.credit.application.system.entity.Address
 import com.eniovi.credit.application.system.entity.Credit
 import com.eniovi.credit.application.system.entity.Customer
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
