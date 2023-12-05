@@ -27,7 +27,7 @@ class RestExceptionHandler {
             ExceptionDetails(
                 timestamp = LocalDateTime.now(),
                 status = HttpStatus.BAD_REQUEST.value(),
-                exception = ex.objectName,
+                exception = ex.javaClass.name,
                 details = errors
             ), HttpStatus.BAD_REQUEST
         )
