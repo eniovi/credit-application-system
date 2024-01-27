@@ -8,7 +8,7 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.UUID
+import java.util.*
 import java.util.stream.Collectors
 
 @RestController
@@ -18,10 +18,9 @@ class CreditController(
 ) {
 
     @PostMapping
-    fun save(@RequestBody @Valid creditDto: CreditDto): ResponseEntity<String> {
+    fun save(@RequestBody @Valid creditDto: CreditDto): ResponseEntity<CreditView> {
         val creditSaved: Credit = creditService.save(creditDto.toCredit())
-        val response = "Credit ${creditSaved.creditCode} - Customer ${creditSaved.customer?.firstName} saved!"
-        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+        return ResponseEntity.status(HttpStatus.CREATED).body(CreditView(creditSaved))
     }
 
     @GetMapping("{customerId}")
