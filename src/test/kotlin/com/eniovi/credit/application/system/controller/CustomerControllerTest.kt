@@ -1,6 +1,7 @@
 package com.eniovi.credit.application.system.controller
 
 import com.eniovi.credit.application.system.dto.CustomerDto
+import com.eniovi.credit.application.system.dto.CustomerUpdateDto
 import com.eniovi.credit.application.system.entity.Customer
 import com.eniovi.credit.application.system.repository.CustomerRepository
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -161,6 +162,70 @@ class CustomerControllerTest {
             ).andExpect(MockMvcResultMatchers.jsonPath("$.details[*]").isNotEmpty)
     }
 
+    @Test
+    fun `should update a customer and return 200 status`() {
+        val customer: Customer = customerRepository.save(builderCustomerDto().toCustomer())
+        val customerUpdateDto: CustomerUpdateDto = builderCustomerUpdateDto()
+
+        val valueAsString = objectMapper.writeValueAsString(customerUpdateDto)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch("$URL/${customer.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(valueAsString)
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Eniovi"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Santos Atualizado"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("345.091.580-09"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("enio@teste.com.br"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.zipCode").value("123456"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.street").value("Rua do Enio Atualizada"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.income").value(BigDecimal.valueOf(2000.0)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+    }
+
+    @Test
+    fun `should not update a customer with invalid id and return 400 status`() {
+        val invalidId = 2L
+        val customerUpdateDto: CustomerUpdateDto = builderCustomerUpdateDto()
+
+        val valueAsString = objectMapper.writeValueAsString(customerUpdateDto)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch("$URL/${invalidId}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(valueAsString)
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400)).andExpect(
+                MockMvcResultMatchers.jsonPath("$.exception")
+                    .value("com.eniovi.credit.application.system.exception.BusinessException")
+            ).andExpect(MockMvcResultMatchers.jsonPath("$.details[*]").isNotEmpty)
+    }
+
+    @Test
+    fun `should not update a customer with firstName empty and return 400 status`() {
+        val customer: Customer = customerRepository.save(builderCustomerDto().toCustomer())
+        val customerUpdateDto: CustomerUpdateDto = builderCustomerUpdateDto(firstName = "")
+        val valueAsString = objectMapper.writeValueAsString(customerUpdateDto)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch("$URL/${customer.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(valueAsString)
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400))
+            .andExpect(
+                MockMvcResultMatchers.jsonPath("$.exception")
+                    .value("org.springframework.web.bind.MethodArgumentNotValidException")
+            )
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details[*]").isNotEmpty)
+    }
+
     private fun builderCustomerDto(
         firstName: String = "Enio",
         lastName: String = "Santos",
@@ -177,6 +242,20 @@ class CustomerControllerTest {
         email = email,
         income = income,
         password = password,
+        zipCode = zipCode,
+        street = street
+    )
+
+    private fun builderCustomerUpdateDto(
+        firstName: String = "Eniovi",
+        lastName: String = "Santos Atualizado",
+        income: BigDecimal = BigDecimal.valueOf(2000.00),
+        street: String = "Rua do Enio Atualizada",
+        zipCode: String = "123456"
+    ) = CustomerUpdateDto(
+        firstName = firstName,
+        lastName = lastName,
+        income = income,
         zipCode = zipCode,
         street = street
     )
